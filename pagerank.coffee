@@ -1,3 +1,6 @@
+---
+---
+
 window.onload = () ->
 
 	canvas = document.getElementById('myCanvas')

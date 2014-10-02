@@ -1,3 +1,6 @@
+---
+---
+
 # to compute the distance between two nodes on the screen
 window.distanceBetweenNodes = (node1, node2) ->
 	dx = node1.x - node2.x
