@@ -18,7 +18,9 @@ window.onload = () ->
 		constructor: (node_start, node_end) ->
 			@node_start = node_start
 			@node_end   = node_end
-		
+	
+	matrix = []
+	userVector = []
 
 	linkingFlags = {linking: false}
 	
@@ -29,7 +31,6 @@ window.onload = () ->
 		offset = $div.offset()
 		x = mouseEvent.clientX - offset.left
 		y = mouseEvent.clientY - offset.top
-		console.debug('x: ' + x + ', y: ' + y)
 
 		switch mouseEvent.which
 			when 1  # left mouse button
@@ -51,6 +52,7 @@ window.onload = () ->
 					node.x = x
 					node.y = y
 					node_list.push(node)
+					computePageRank()  # we compute PageRank again
 				
 	)
 	$('#myCanvas').mouseup((mouseEvent) ->
@@ -59,7 +61,6 @@ window.onload = () ->
 		offset = $div.offset()
 		x = mouseEvent.clientX - offset.left
 		y = mouseEvent.clientY - offset.top
-		console.debug('x: ' + x + ', y: ' + y)
 
 		switch mouseEvent.which
 			when 1  # left mouse button
@@ -76,17 +77,133 @@ window.onload = () ->
 						# we check that it's not the same node as the start node
 						if node == linkingFlags.node_start
 							break
+						# we check that the nodes weren't already linked
+						alreadyLinked = false
+						for link in link_list
+							if link.node_start == linkingFlags.node_start and link.node_end == node
+								alreadyLinked = true
+								break
+						if alreadyLinked is true
+							break
 
 						# we create a link between the two nodes
 						link = new Link(linkingFlags.node_start, node)
-						# link.node_start = linkingFlags.node_start
-						# link.node_end = node
 
 						link_list.push(link)
+						computePageRank()  # we compute PageRank again
 						break
 				
 				linkingFlags.linking = false  # reset flag
 	)
 
+	# we compute the pagerank of each node
+	computePageRank = () ->
+		updateMatrix()   # http://en.wikipedia.org/wiki/Stochastic_matrix
+
+		userVector = []
+		i = 0
+		while i < node_list.length
+			userVector[i] = 1 / node_list.length
+			i++
+
+		i = 0
+		while i < 10  # TODO: we should stop given a condition about if userVector converges or not
+			newClickOnLink()
+			i++
+
+		updateNodesSize()
+
+		printMatrix()
+		printUserVector()
+
+
+	# we update the stochastic matrix, in case user added pages (nodes) or links between pages
+	updateMatrix = () ->
+		# we create a new matrix
+		matrix = []
+		i = 0
+		while i < node_list.length
+			matrix[i] = []
+			i++
+
+		i = 0
+		while i < node_list.length
+
+			# we count the number of links to another page, from this page
+			n = 0
+			for link in link_list
+				if link.node_start is node_list[i]
+					n++
+
+			# we update coefficients for the current line in the matrix
+			j = 0
+			while j < node_list.length
+				# if n = 0 (no link on the page), user should not be locked on the page,
+				# so user is redirected on an other page (all pages with same probability)
+				if n is 0
+					matrix[i][j] = 1 / node_list.length
+				else
+					# we search if the pages are linked
+					linked = false
+					for link in link_list
+						if link.node_start is node_list[i] and link.node_end is node_list[j]
+							matrix[i][j] = 1 / n
+							linked = true
+							break
+					if linked is false
+						matrix[i][j] = 0
+				j++
+			i++
+
+
+	newClickOnLink = () ->
+		i = 0
+		userVectorNew = []
+		while i < node_list.length
+			userVectorNew[i] = 0
+			j = 0
+			while j < node_list.length
+				userVectorNew[i] += userVector[j] * matrix[j][i]
+				j++
+			i++
+		userVector = userVectorNew
+
+
+	updateNodesSize = () ->
+		i = 0
+		while i < node_list.length
+			node_list[i].radius = 50 * userVector[i]
+			if node_list[i].radius < 5
+				node_list[i].radius = 5  # minimum size
+			i++
+
+
 	setInterval(`function() {window.animate(canvas, context, node_list, link_list)}`, 1000/10)
-	# the drawing function will be called with a framerate of 10 FPS
+	# the drawing function (in file display.coffee) will be called with a framerate of 10 FPS
+
+
+	printMatrix = () ->   # debug
+		console.log("===== matrix ======")
+		# we round the coefficient for a better display
+		i = 0
+		while i < matrix.length
+			j = 0
+			while j < matrix[i].length
+				matrix[i][j] = matrix[i][j].toFixed(2)
+				j++
+			i++
+
+		# we display the matrix in a console (ctrl + shift + s -> display console in firefox)
+		i = 0
+		while i < matrix.length
+			console.log(matrix[i])
+			i++
+
+	printUserVector = () ->   # debug
+		console.log("===== user vector =====")
+		# we round coefficients for a better display
+		i = 0
+		while i < userVector.length
+			userVector[i] = userVector[i].toFixed(2)
+			i++
+		console.log(userVector)

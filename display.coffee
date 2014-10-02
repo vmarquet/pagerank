@@ -1,13 +1,19 @@
 # the drawing function
 window.animate = (canvas, context, node_list, link_list) ->
 
-	console.log(node_list.length)
-	console.log(link_list.length)
+	# we draw the white background
+	context.beginPath()
+	context.strokeStyle = 'white'
+	context.rect(0,0, canvas.width, canvas.height)
+	context.fillStyle = 'white'
+	context.fill()
+	context.stroke()
+	context.closePath()
 
-	
+
 	# we draw a rectangle to delimitate the drawing zone
 	context.beginPath()
-	context.strokeStyle = '#000000'
+	context.strokeStyle = 'black'
 	context.moveTo(0, 0)
 	context.lineTo(canvas.width, 0)
 	context.lineTo(canvas.width, canvas.height)
