@@ -95,6 +95,11 @@ window.onload = () ->
 				
 				linkingFlags.linking = false  # reset flag
 	)
+	$('#clearButton').click(() ->
+		# we clear the display
+		node_list = []
+		link_list = []
+	)
 
 	# we compute the pagerank of each node
 	computePageRank = () ->
@@ -138,10 +143,16 @@ window.onload = () ->
 			# we update coefficients for the current line in the matrix
 			j = 0
 			while j < node_list.length
-				# if n = 0 (no link on the page), user should not be locked on the page,
+				# if n = 0 (no link to another the page), user should not be locked on the page,
 				# so user is redirected on an other page (all pages with same probability)
 				if n is 0
-					matrix[i][j] = 1 / node_list.length
+					if node_list.length is 1
+						matrix[i][j] = 1
+					else  # we only make links to another page, not to the same page
+						if j is i
+							matrix[i][j] = 0
+						else
+							matrix[i][j] = 1 / (node_list.length - 1)
 				else
 					# we search if the pages are linked
 					linked = false
@@ -172,13 +183,11 @@ window.onload = () ->
 	updateNodesSize = () ->
 		i = 0
 		while i < node_list.length
-			node_list[i].radius = 50 * userVector[i]
-			if node_list[i].radius < 5
-				node_list[i].radius = 5  # minimum size
+			node_list[i].radius = 50 * userVector[i] + 10
 			i++
 
 
-	setInterval(`function() {window.animate(canvas, context, node_list, link_list)}`, 1000/10)
+	setInterval(`function() {window.animate(canvas, context, node_list, link_list, userVector)}`, 1000/10)
 	# the drawing function (in file display.coffee) will be called with a framerate of 10 FPS
 
 
