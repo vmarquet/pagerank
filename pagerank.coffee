@@ -26,8 +26,10 @@ window.onload = () ->
 	userVector = []
 
 	linkingFlags = {linking: false}
-	
-	# jQuery code to get mouse clicks
+	mousePositionX = 0
+	mousePositionY = 0
+
+	# jQuery code to get mouse clicks, etc...
 	$('#myCanvas').mousedown((mouseEvent) ->
 		# we get the mouse position
 		$div = $(mouseEvent.target)
@@ -102,6 +104,30 @@ window.onload = () ->
 		# we clear the display
 		node_list = []
 		link_list = []
+	)
+	# we need to save mouse position
+	$(document).bind('mousemove',(mouseEvent) ->
+		$div = $(mouseEvent.target)
+		offset = $div.offset()
+		mousePositionX = mouseEvent.clientX - offset.left
+		mousePositionY = mouseEvent.clientY - offset.top
+	)
+	# to remove a node if we use SUPPR or BACKSPACE button over it
+	$('html').keyup((keyboardEvent) ->
+		if keyboardEvent.keyCode == 8 or keyboardEvent.keyCode == 46
+			for node in node_list
+				if distanceBetweenPoints(node.x, node.y, mousePositionX, mousePositionY) < node.radius
+					# we remove all links that were starting or arriving to this node
+					i = 0
+					while i < link_list.length
+						if link_list[i].node_start is node or link_list[i].node_end is node
+							link_list.splice(i,1)
+						else
+							i++
+					# finally, we can remove the node
+					node_list.splice(node_list.indexOf(node),1)
+					computePageRank()   # we update PageRank coefficients
+					break
 	)
 
 	# we compute the pagerank of each node

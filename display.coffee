@@ -73,8 +73,8 @@ window.drawArrow = (link, context) ->
 
 	# we compute the two other points corresponding to the sides of the arrow:
 	# 1) arrow coefficients
-	length = 10*Math.sqrt(3)  # length of the arrow head
-	half_width = 10           # half width of the arrow head
+	length = 6*Math.sqrt(3)  # length of the arrow head
+	half_width = 6           # half width of the arrow head
 	# 2) let's compute a unit vector perpendicular to the line
 	perp_x = -dy_norm
 	perp_y =  dx_norm
