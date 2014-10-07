@@ -105,6 +105,44 @@ window.onload = () ->
 		node_list = []
 		link_list = []
 	)
+	$('#infoButton').click(() ->
+		# we display an info popup
+		str = 'Use the "clear" button to clear the display. It will remove all nodes and all links.\n\n'
+		str += 'ProTip: you can also use SUPPR or BACKSPACE if you want to remove a single node.' 
+		alert(str)
+	)
+	$('#matrixButton').click(() ->
+		# we display the stochastic matrix
+		updateMatrix()  # we compute it again, in case nodes or links have been added
+
+		if matrix.length == 0
+			alert("The matrix is empty !")
+			return
+
+		# we round the coefficient for a better display
+		i = 0
+		while i < matrix.length
+			j = 0
+			while j < matrix[i].length
+				matrix[i][j] = matrix[i][j].toFixed(2)
+				j++
+			i++
+
+		# we convert the matrix into a string
+		i = 0
+		str = ""
+		while i < matrix.length
+			j = 0
+			while j < matrix[i].length
+				str += matrix[i][j].toString()
+				if j < matrix[i].length - 1
+					str += "  "
+				else
+					str += "\n"
+				j++
+			i++
+		alert(str)
+	)
 	# we need to save mouse position
 	$(document).bind('mousemove',(mouseEvent) ->
 		$div = $(mouseEvent.target)
