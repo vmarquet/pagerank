@@ -109,14 +109,14 @@ window.onload = () ->
 		# we display an info popup
 		str = 'Use the "clear" button to clear the display. It will remove all nodes and all links.\n\n'
 		str += 'ProTip: you can also use SUPPR or BACKSPACE if you want to remove a single node.' 
-		alert(str)
+		alert(str + '\n\n')
 	)
 	$('#matrixButton').click(() ->
 		# we display the stochastic matrix
 		updateMatrix()  # we compute it again, in case nodes or links have been added
 
 		if matrix.length == 0
-			alert("The matrix is empty !")
+			alert("The matrix is empty !\n")
 			return
 
 		# we round the coefficient for a better display
@@ -141,7 +141,7 @@ window.onload = () ->
 					str += "\n"
 				j++
 			i++
-		alert(str)
+		alert(str + '\n')
 	)
 	# we need to save mouse position
 	$(document).bind('mousemove',(mouseEvent) ->
@@ -167,6 +167,16 @@ window.onload = () ->
 					computePageRank()   # we update PageRank coefficients
 					break
 	)
+	# to save the canvas content in a PNG image
+	pictureCounter = 0
+	$('#pictureButton').click(() ->
+		pictureCounter++
+		w = window.open('about:blank','image from canvas ' + pictureCounter)
+		w.document.write("
+			<!DOCTYPE HTML><head></head><body> \
+				<img src='"+canvas.toDataURL("image/png")+"' alt='image from canvas'/> \
+			</body></html>")
+	)
 
 	# we compute the pagerank of each node
 	computePageRank = () ->
@@ -179,7 +189,7 @@ window.onload = () ->
 			i++
 
 		i = 0
-		while i < 10  # TODO: we should stop given a condition about if userVector converges or not
+		while i < 11  # TODO: we should stop given a condition about if userVector converges or not
 			newClickOnLink()
 			i++
 
