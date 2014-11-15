@@ -6,6 +6,17 @@ window.onload = () ->
 	canvas = document.getElementById('myCanvas')
 	alert "Canvas not found" if !canvas
 
+	# we set the size of the canvas depending on the size of the screen
+	# 1) we get the screen size
+	img = document.getElementById('myCanvasDiv')
+	computed_style = getComputedStyle(img)
+	screen_width  = parseInt(computed_style.getPropertyValue('width'), 10)
+	screen_height = parseInt(computed_style.getPropertyValue('height'), 10)
+	# 2) we set the canvas size
+	canvas.width  = screen_width
+	canvas.height = screen_height
+
+
 	context = canvas.getContext('2d')  # we need the context object to call drawing methods
 	alert "Context not found" if !context
 
@@ -108,7 +119,7 @@ window.onload = () ->
 	$('#infoButton').click(() ->
 		# we display an info popup
 		str = 'Use the "clear" button to clear the display. It will remove all nodes and all links.\n\n'
-		str += 'ProTip: you can also use SUPPR or BACKSPACE if you want to remove a single node.' 
+		str += 'ProTip: you can also use SUPPR key if you want to remove a single node.' 
 		alert(str + '\n\n')
 	)
 	$('#matrixButton').click(() ->
@@ -150,9 +161,9 @@ window.onload = () ->
 		mousePositionX = mouseEvent.clientX - offset.left
 		mousePositionY = mouseEvent.clientY - offset.top
 	)
-	# to remove a node if we use SUPPR or BACKSPACE button over it
+	# to remove a node if we use SUPPR button over it
 	$('html').keyup((keyboardEvent) ->
-		if keyboardEvent.keyCode == 8 or keyboardEvent.keyCode == 46
+		if keyboardEvent.keyCode == 46
 			for node in node_list
 				if distanceBetweenPoints(node.x, node.y, mousePositionX, mousePositionY) < node.radius
 					# we remove all links that were starting or arriving to this node
