@@ -182,11 +182,8 @@ window.onload = () ->
 	pictureCounter = 0
 	$('#pictureButton').click(() ->
 		pictureCounter++
-		w = window.open('about:blank','image from canvas ' + pictureCounter)
-		w.document.write("
-			<!DOCTYPE HTML><head></head><body> \
-				<img src='"+canvas.toDataURL("image/png")+"' alt='image from canvas'/> \
-			</body></html>")
+		this.href = canvas.toDataURL()
+		this.download = "PageRank" + pictureCounter + ".png"
 	)
 
 	# we compute the pagerank of each node
