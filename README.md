@@ -2,7 +2,7 @@ Description
 -----------
 A PageRank simulation (simplified), using [CoffeeScript](http://coffeescript.org/). See it in action [here](http://vmarquet.github.io/pagerank/).
 
-![screenshot](https://drive.google.com/uc?export=view&id=0B31-CIvNW1LdWm5NWXlqU25Hc2s)
+![screenshot](./pagerank.png)
 
 Sources
 -------
